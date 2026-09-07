@@ -1,6 +1,7 @@
 package turismo.negocio;
 
 import java.util.Date;
+import java.util.List;
 
 // em negócio é onde ficam as classes responsáveis pelas entidades
 // e pelas regras de negócio do sistema
@@ -26,6 +27,7 @@ public class Evento {
         this.pontoTuristico = pontoTuristico;
         this.status = status;
     }
+
 
     // método fábrica
     public static Evento getInstance(String nome, String descricao, Date dataInicio, Date dataFim, PontoTuristico pontoTuristico, TipoStatusEvento status) {
