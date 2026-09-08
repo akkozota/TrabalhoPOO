@@ -5,6 +5,8 @@ import java.util.List;
 
 import turismo.negocio.Usuario;
 
+
+
 public class RepositorioUsuarios {
 
     private List<Usuario> usuarios;
@@ -14,54 +16,58 @@ public class RepositorioUsuarios {
     }
 
     // inserir
-    public boolean add(Usuario usuario) {
 
-        if (usuario == null)
-            return false;
+    void inserirUsuario(Usuario u) {
+        //* usando o add pra adicionar um objeto dentro do ArrayList
+        if (u != null) {
+            //if (u != null && buscarUsuario(u.getLogin()) == null) {
+            usuarios.add(u);
+        }
+    }
 
-        usuarios.add(usuario);
-        return true;
+    public Usuario loginUsuario(String nomeUsuario, String senhaLogin) {
+        for (int i = 0; i < usuarios.size() ; i++) {
+            Usuario usuariosLista = usuarios.get(i);
+            if (usuariosLista.getNomeUsuario().equals(nomeUsuario) && usuariosLista.getSenha().equals(senhaLogin)) {
+                return usuariosLista;
+            }
+        }
+        return null;
+    }
+
+    public void mudarTipoUsuario(Usuario usuario) {
+        if (usuario != null) {
+            usuario.mudarTipoUsuario();
+        }
     }
 
     // alterar
     public boolean alterar(Usuario usuarioAlterado) {
-
         if (usuarioAlterado == null)
             return false;
-
         for (int i = 0; i < usuarios.size(); i++) {
-
-            if (usuarios.get(i).getCodigo()
-                    == usuarioAlterado.getCodigo()) {
-
+            if (usuarios.get(i).getCodigo() == usuarioAlterado.getCodigo()) {
                 usuarios.set(i, usuarioAlterado);
                 return true;
             }
         }
-
         return false;
     }
 
     // excluir
     public boolean excluir(int codigo) {
-
         for (int i = 0; i < usuarios.size(); i++) {
-
             if (usuarios.get(i).getCodigo() == codigo) {
-
                 usuarios.remove(i);
                 return true;
             }
         }
-
         return false;
     }
 
     // buscar
     public Usuario buscarPorId(int codigo) {
-
         for (Usuario usuario : usuarios) {
-
             if (usuario.getCodigo() == codigo)
                 return usuario;
         }
@@ -89,3 +95,5 @@ public class RepositorioUsuarios {
         return usuarios;
     }
 }
+
+
