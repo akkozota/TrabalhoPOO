@@ -1,7 +1,7 @@
 package turismo.negocio;
 
-import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 
 public class PontoTuristico {
     private String nome;
@@ -20,7 +20,7 @@ public class PontoTuristico {
         this.codigo = proximoCodigo++;
         this.nome = nome;
         this.descricao = descricao;
-        this.categorias = categorias;
+        this.categorias = new ArrayList<TipoCategoria>(categorias);
         this.endereco = endereco;
         this.cidade = cidade;
         this.coordenadasGPS = coordenadasGPS;
@@ -29,7 +29,7 @@ public class PontoTuristico {
 
     // método fábrica
     public static PontoTuristico getInstance(String nome, String descricao, List<TipoCategoria> categorias, String endereco, Cidade cidade, String coordenadasGPS, TipoStatusPonto status) {
-        if (nome != null && descricao != null && categorias != null && endereco != null && cidade != null && coordenadasGPS != null && status != null) {
+        if (nome != null && descricao != null && categorias != null && !categorias.isEmpty() && endereco != null && cidade != null && coordenadasGPS != null && status != null) {
             return new PontoTuristico(nome, descricao, categorias, endereco, cidade, coordenadasGPS, status);
         }
         return null;
@@ -60,7 +60,23 @@ public class PontoTuristico {
     }
 
     public void setCategorias(List<TipoCategoria> categorias) {
-        this.categorias = categorias;
+        this.categorias = new ArrayList<TipoCategoria>(categorias);
+    }
+
+    public void adicionarCategoria(TipoCategoria categoria) {
+        for (int i = 0; i < categorias.size(); i++) {
+            if (categoria != null && categorias.get(i) != categoria) {
+                categorias.add(categoria);
+            }
+        }
+    }
+
+    public void removerCategoria(TipoCategoria categoria) {
+        for (int i = 0; i < categorias.size(); i++) {
+            if (categoria != null && categorias.get(i) == categoria) {
+                categorias.remove(categoria);
+            }
+        }
     }
 
     public Cidade getCidade() {
