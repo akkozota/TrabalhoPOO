@@ -1,0 +1,560 @@
+package turismo.ui;
+
+//heitor, peguei o cod do meu trabalho e adaptei algumas coisas,,, ainda tem trem p mexer 
+
+import turismo.negocio.*;
+import java.util.List;
+import java.util.Scanner;
+import java.time.LocalDate;
+
+public class Main {
+    static Scanner scn = new Scanner(System.in);
+
+    static int larguraColuna = 15; //largura de tds as colunas
+
+    public static void main(String[] args) {
+        Sistema sist = Sistema.getInstance(); //criando e chamando o singleton da classe,
+        //o sist é uma referência p objeto da classe Sistema, q aponta p única instância do sistema
+        // sistema, que cria um obj sist
+        sist.init(); //executando o metodo init desse objeto
+
+        Usuario usuario = null;
+
+        do {
+            //LOGIN
+            System.out.println("\n Bem-vindo ao turismo no vale !");
+            System.out.println("\n --- REALIZE O LOGIN ---");
+            System.out.println("\n NOME DE USUÁRIO:");
+            String nomeUsuario = scn.next();
+            System.out.println("\n SENHA:");
+            String senhaLogin = scn.next();
+
+            usuario = sist.loginUsuario(nomeUsuario, senhaLogin);
+            if (usuario == null) {
+                System.out.println("\n --- LOGIN INVÁLIDO !! ---");
+            }
+
+
+        } while (usuario == null);
+
+        while (true) {
+
+            if (usuario.getTipoUsuario() == TipoUsuario.ADMIN) {
+                menuAdmin(sist, usuario);
+            } else {
+                menuAtendente(sist, usuario);
+            }
+
+        }
+    }
+
+    // --- ADMINISTRADOR ---
+
+    static void menuAdmin(Sistema sist, Usuario usuario) { //sem public pq outras classes de diferentes pacotes n vão ter acesso
+        int opcao;
+        do {
+            System.out.println("\n --- TURISMO NO VALE- ADMINISTRADOR ---");
+            System.out.println("0 - SAIR");
+            System.out.println("1 - CADASTRAR PONTO");
+            System.out.println("2 - BUSCAR PONTO");
+            System.out.println("3 - ALTERAR PONTO");
+            System.out.println("4 - INATIVAR PONYO");
+            System.out.println("5 - CADASTRAR EVENTO");
+            System.out.println("6 - BUSCAR EVENTO");
+            System.out.println("7 - ALTERAR EVENTO");
+            System.out.println("8 - EXCLUIR EVENTO");
+            System.out.println("9 - LISTAGEM PONTOS");
+            System.out.println("10 - LISTAGEM EVENTOS");
+            System.out.println("11 - LISTAGEM PONTOS POR CIDADE");
+            System.out.println("12 - LISTAR EVENTOS POR CIDADE");
+            System.out.println("13 - MUDAR PARA MENU COMUM");
+            System.out.println("14 - MUDAR PARA MENU PROPRIETÁRIO");
+
+            opcao = scn.nextInt();
+
+            switch (opcao) {
+                case 0:
+                    System.out.println("Finalizando o programa!");
+
+                    break;
+                case 1: // cadastrar ponto
+                    scn.nextLine();
+                    System.out.println("Nome ponto: ");
+                    String nomePonto = scn.nextLine();
+
+                    System.out.println("Fabricante: ");
+                    String nomeFabricante = scn.nextLine();
+
+                    System.out.println("CNPJ: ");
+                    String cnpj = scn.nextLine();
+
+                    PontoTuristico p = PontoTuristico.getInstance(nomePonto, nomeFabricante, cnpj);
+                    if (p == null) {
+                        System.out.println("ERRO! Dados inválidos.");
+                    } else {
+                        sist.inserirPonto(p);
+                        System.out.println("Ponto cadastrado com sucesso!");
+                    }
+
+                    break;
+                case 2: //buscar marca e devolver seu código
+                    scn.nextLine();
+                    System.out.println("Digite o nome da marca procurada");
+                    String nomeMarca = scn.nextLine();
+                    int codigo = sist.buscarMarca(nomeMarca);
+                    if (codigo == -1) {
+                        System.out.println("ERRO! Marca não encontrada!");
+                    } else {
+                        System.out.println("Código da marca: " + codigo);
+                    }
+                    break;
+                case 3: //update marca
+                    scn.nextLine();
+                    System.out.println("Digite o código da marca a ser atualizada:");
+                    int codUpdate = scn.nextInt();
+                    scn.nextLine();
+                    System.out.println("Digite o novo nome da marca:");
+                    String marcaNova = scn.nextLine();
+
+                    System.out.println("Digite o novo fabricante da marca:");
+                    String fabNovo = scn.nextLine();
+
+                    boolean atualizou = sist.updateMarca(codUpdate, marcaNova, fabNovo);
+                    if (!atualizou) {
+                        System.out.println("ERRO! Marca não encontrada!");
+                    } else {
+                        System.out.print("Marca atualizada com sucesso!");
+                    }
+
+                    break;
+
+                case 4: //excluir marca
+                    scn.nextLine();
+                    System.out.println("-- Código da marca: --");
+                    int codExclusao = scn.nextInt();
+                    scn.nextLine();
+                    boolean excluiu = sist.excluirMarca(codExclusao);
+
+                    if (!excluiu) {
+                        System.out.println("ERRO! A marca não foi encontrada OU possui produtos vinculados a ela!!");
+                    } else {
+                        System.out.println("Marca excluída com sucesso!");
+                    }
+                    break;
+                //-- Produtos --
+                case 5: // Cadastrar produto
+                    scn.nextLine();
+                    System.out.print("Nome do produto: ");
+                    String nomeP = scn.nextLine();
+
+                    System.out.print("Digite o nome da marca deste produto: ");
+                    String nomeMarcaP = scn.nextLine();
+
+                    // procura a marca na lista do sistema
+                    Marca marcaEncontrada = sist.buscarMarcaPorNome(nomeMarcaP);
+
+                    // vê se a marca existe
+                    if (marcaEncontrada == null) {
+                        System.out.println("ERRO! Essa marca não está cadastrada no sistema. Cadastre a marca primeiro!");
+                    } else {
+                        // se a marca existe, pede os outros dados do produto
+                        System.out.print("Quantidade do produto: ");
+                        int quantP = scn.nextInt();
+
+                        System.out.print("Preço do produto: ");
+                        double precoP = scn.nextDouble();
+                        scn.nextLine();
+
+                        Produto p = Produto.getInstance(nomeP, marcaEncontrada, quantP, precoP);
+                        //variavel p guarda o endereço de onde esse produto tá na memória, não guarda o prod la
+                        boolean inseriu = sist.inserirProd(p);
+                        if (inseriu) {
+                            System.out.println("Produto cadastrado com sucesso!");
+                        } else {
+                            System.out.println("Já existe um produto com esse nome.");
+                        }
+                    }
+                    break;
+                case 6: //buscar produto
+                    scn.nextLine();
+                    System.out.println(" -- Digite o nome do produto desejado: --");
+                    String nomeProd = scn.nextLine();
+                    int procurarCodP = sist.buscarProd(nomeProd); //verificando se existe esse prod msm
+
+                    if (procurarCodP ==-1) {
+                        System.out.println("ERRO! Não foi encontrado produto com esse nome!");
+                    } else {
+                        //se achar prod com esse nome, devolve o código dele
+                        //int codigoProd = sist.buscarCodProd(nomeProd);
+                        System.out.println("Produto encontrado! Código do produto: " + procurarCodP);
+                    }
+                    break;
+
+                case 7: //update produto
+                    scn.nextLine();
+                    System.out.println("Digite o código do produto a ser atualizado:");
+                    int codUpdateP = scn.nextInt();
+                    boolean procurar = sist.buscarCodProd(codUpdateP);
+                    if (!procurar) {
+                        System.out.println("ERRO! Produto não encontrado!");
+                    } else {
+                        //se existir, atualiza
+                        scn.nextLine();
+                        System.out.println("Digite o novo nome do produto:");
+                        String prodNovo = scn.nextLine();
+
+                        int procurarNomeP = sist.buscarProd(prodNovo);
+                        if (procurarNomeP == -1 || procurarNomeP == codUpdateP) {
+                            //se não achou, continua
+                            System.out.println("Digite a nova quantidade do produto:");
+                            int quantNova = scn.nextInt();
+                            scn.nextLine();
+
+                            System.out.println("Digite o novo preço do produto:");
+                            double precoNovo = scn.nextDouble();
+                            scn.nextLine();
+
+                            System.out.print("Digite o nome da nova marca do produto:");
+                            String nomeMarcaNova = scn.nextLine();
+
+                            Marca marcaObj = sist.buscarMarcaPorNome(nomeMarcaNova);
+                            sist.updateProd(codUpdateP, prodNovo, quantNova, precoNovo, marcaObj);
+
+                            System.out.println("Marca atualizada com sucesso!");
+                        } else {
+                            System.out.println("ERRO! Já existe produto com esse nome!");
+                        }
+                    }
+                    break;
+                case 8: //excluir produtos
+                    scn.nextLine();
+                    System.out.println("-- Código do produto: --");
+                    int codExclusaoP = scn.nextInt();
+                    scn.nextLine();
+
+                    boolean excluiuP = sist.excluirProd(codExclusaoP);
+                    if (!excluiuP) {
+                        System.out.println("ERRO! Produto não encontrado!");
+                    } else {
+                        System.out.println("Produto excluído com sucesso!");
+                    }
+
+                    break;
+                case 9: //listagem marcas
+                    scn.nextLine();
+                    listarMarcas(sist);
+                    break;
+
+                case 10: //listagem produtos
+                    scn.nextLine();
+                    listarProdutos(sist);
+                    break;
+
+                case 11: //listagem produtos de uma marca
+                    listarProdutosMarca(sist);
+                    break;
+                case 12:
+                    listarProdutosAlfabetica(sist);
+                    break;
+                case 13: //listagem vendas
+                    scn.nextLine();
+                    List<Venda> vendas = sist.getVendas();
+                    for (int i = 0; i < vendas.size(); i++) {
+                        Venda venda = vendas.get(i);
+                        System.out.println(venda.getCodigo() + " - " + venda.getNomeCliente() + " - " + venda.getData());
+                    }
+                    break;
+                case 14: //listagem vendas de um dia x
+                    scn.nextLine();
+
+                    System.out.println("Digite a data (AAAA-MM-DD):");
+                    String dataTexto = scn.nextLine();
+                    LocalDate data = LocalDate.parse(dataTexto);
+
+                    List<Venda> vendasDia = sist.listarVendaDia(data);
+                    if (vendasDia.size() == 0) {
+                        System.out.println("Nenhuma venda encontrada nessa data.");
+                    } else {
+                        for (int i = 0; i < vendasDia.size(); i++) {
+                            Venda venda = vendasDia.get(i);
+                            System.out.println(venda.getCodigo() + " - "+ venda.getNomeCliente()+ " - " + venda.getData());
+                        }
+                    }
+                    break;
+                case 15: //pesquisa venda por código
+                    scn.nextLine();
+                    System.out.println("Digite o código da venda procurada");
+                    int codigoV = scn.nextInt();
+                    Venda v = sist.buscarVenda(codigoV);
+                    if (v == null) {
+                        System.out.println("Venda não encontrada.");
+                    }
+                    else {
+                        System.out.println("Venda encontrada!");
+                    }
+                    break;
+                case 16: //ajuste de colunas
+                    ajustarColunas();
+                    break;
+                case 17: //mudar para menu atendente
+                    scn.nextLine();
+                    System.out.print("\n -- MUDANDO O MENU... --");
+                    sist.mudarTipoUsuario(usuario);
+                    return;
+
+                default: // se não entrar em nenhum case
+                    System.out.println("Opção invalida: escolha entre 0 e 3");
+                    break;
+            }
+
+        } while (opcao != 0);
+    }
+
+    // --- ATENDENTE ---
+
+    static void menuComum(Sistema sist, Usuario usuario) {
+        int opcao;
+        do {
+            System.out.println("\n --- TURISMO NO VALE- COMUM ---");
+            System.out.println("0 - SAIR");
+            System.out.println("1 - BUSCAR PONTO");
+            System.out.println("2 - BUSCAR EVENTO");
+            System.out.println("3 - SOLICITAR PROPRIEDADE");
+            System.out.println("4 - BUSCAR PONTO POR CIDADE");
+            System.out.println("5 - BUSCAR EVENTO POR CIDADE");
+            System.out.println("6 - MUDAR PARA MENU ADMIN");
+
+            opcao = scn.nextInt();
+
+            switch (opcao) {
+                case 0:
+                    System.out.print("Finalizando o programa...");
+                    return;
+                case 1: //buscar produto e retornar código
+                    scn.nextLine();
+                    System.out.println(" -- Digite o nome do produto desejado: --");
+                    String nomeProd = scn.nextLine();
+                    int codigo = sist.buscarProd(nomeProd);
+
+                    if (codigo == -1) {
+                        System.out.print("ERRO! Produto não encontrada!");
+                    } else {
+                        System.out.println("Código do produto: " + codigo);
+                    }
+
+                    break;
+                case 2: //iniciar venda
+                    scn.nextLine();
+                    sist.iniciarVenda();
+                    System.out.println("Carrinho aberto!");
+
+                    break;
+                case 3: //inserir produto no carrinho
+                    scn.nextLine();
+                    System.out.println(" -- Digite o código do produto: --");
+                    int codigoP = scn.nextInt();
+
+                    System.out.println(" -- Quantidade: -- ");
+                    int qtd = scn.nextInt();
+
+                    boolean inseriu = sist.inserirProdCarrinho(codigoP, qtd);
+
+                    if (inseriu) {
+                        System.out.println("Produto inserido.");
+                    } else {
+                        System.out.println("Erro ao inserir produto.");
+                    }
+
+                    break;
+                case 4:
+                    scn.nextLine();
+                    System.out.println("Digite o nome do cliente que realizou a venda:");
+                    String nomeCliente = scn.nextLine();
+                    boolean vendeu = sist.finalizarVenda(nomeCliente);
+
+                    if (vendeu) {
+                        System.out.println("Venda realizada com sucesso!");
+                    } else {
+                        System.out.println("Erro ao finalizar venda.");
+                    }
+                    break;
+                case 5:
+                    List<Item> itensCarrinho = sist.listarCarrinho();
+
+                    if (itensCarrinho.size() == 0) {
+                        System.out.println("Carrinho vazio.");
+                    } else {
+                        for (int i = 0; i < itensCarrinho.size(); i++) {
+                            Item item = itensCarrinho.get(i);
+                            System.out.println(
+                                    item.getProduto().getNome()+ " - "+ item.getQuantidade()+ " x "+ item.getPreco());
+                        }
+                    }
+
+
+                    break;
+                case 6:
+                    scn.nextLine();
+                    System.out.print("\n -- MUDANDO O MENU... --");
+                    sist.mudarTipoUsuario(usuario);
+                    return;
+
+                default: // se não entrar em nenhum case
+                    System.out.println("Opção invalida: escolha entre 0 e 3");
+                    break;
+            }
+        } while (opcao != 0);
+    }
+
+    static void printCol(String texto) {
+        if (texto.length() > larguraColuna) {
+            texto = texto.substring(0, larguraColuna);
+        }
+
+        System.out.print(texto);
+
+        int espacosRestantes = larguraColuna - texto.length();
+
+        for (int i = 0; i < espacosRestantes; i++) {
+            System.out.print(" ");
+        }
+
+        System.out.print(" | ");
+    }
+
+    static void listarMarcas(rascunhoSistema sist) {
+        List<Marca> marcas = sist.listarMarcas();
+
+        System.out.println();
+
+        printCol("COD");
+        printCol("NOME");
+        printCol("FABRICANTE");
+        System.out.println();
+
+        for (int i = 0; i < marcas.size(); i++) {
+            Marca m = marcas.get(i);
+
+            printCol(String.valueOf(m.getCodigo())); //transformar int em string
+            printCol(m.getNomeFantasia());
+            printCol(m.getNomeFabricante());
+
+            System.out.println();
+        }
+    }
+
+    static void listarProdutos(rascunhoSistema sist) {
+        List<Produto> produtos = sist.getProdutos();
+
+        System.out.println();
+
+        printCol("COD");
+        printCol("NOME");
+        printCol("MARCA");
+        printCol("PRECO");
+        printCol("QTD");
+        System.out.println();
+
+        if (produtos.size() == 0) {
+            System.out.println("Nenhum produto cadastrado.");
+            return;
+        }
+
+        for (int i = 0; i < produtos.size(); i++) {
+            Produto p = produtos.get(i);
+
+            if (!p.isExcluido()) {
+                printCol(String.valueOf(p.getCodigo()));
+                printCol(p.getNome());
+                printCol(p.getMarca().getNomeFantasia());
+                printCol(String.valueOf(p.getPreco()));
+                printCol(String.valueOf(p.getQuantidade()));
+                System.out.println();
+            }
+
+            System.out.println();
+        }
+    }
+
+    static void listarProdutosMarca(rascunhoSistema sist) {
+        System.out.print("Código da marca: ");
+        int codigoMarca = scn.nextInt();
+
+        List<Produto> produtos = sist.listarProdMarca(codigoMarca);
+
+        System.out.println();
+
+        printCol("COD");
+        printCol("NOME");
+        printCol("MARCA");
+        printCol("PRECO");
+        printCol("QTD");
+        System.out.println();
+
+        if (produtos.size() == 0) {
+            System.out.println("Nenhum produto encontrado.");
+            return;
+        }
+
+        for (int i = 0; i < produtos.size(); i++) {
+            Produto p = produtos.get(i);
+
+            if (!p.isExcluido()) {
+                printCol(String.valueOf(p.getCodigo()));
+                printCol(p.getNome());
+                printCol(p.getMarca().getNomeFantasia());
+                printCol(String.valueOf(p.getPreco()));
+                printCol(String.valueOf(p.getQuantidade()));
+                System.out.println();
+            }
+        }
+    }
+
+    static void listarProdutosAlfabetica(rascunhoSistema sist) {
+        List<Produto> produtos = sist.listarProdAlfabetica();
+
+        System.out.println();
+        printCol("COD");
+        printCol("NOME");
+        printCol("MARCA");
+        printCol("PRECO");
+        printCol("QTD");
+        System.out.println();
+
+        if (produtos.size() == 0) {
+            System.out.println("Nenhum produto cadastrado.");
+            return;
+        }
+
+        for (int i = 0; i < produtos.size(); i++) {
+            Produto p = produtos.get(i);
+
+            if (!p.isExcluido()) {
+                printCol(String.valueOf(p.getCodigo()));
+                printCol(p.getNome());
+                printCol(p.getMarca().getNomeFantasia());
+                printCol(String.valueOf(p.getPreco()));
+                printCol(String.valueOf(p.getQuantidade()));
+                System.out.println();
+            }
+
+        }
+
+    }
+
+    static void ajustarColunas() {
+        System.out.print("Digite a largura das colunas: ");
+        int novaLargura = scn.nextInt();
+
+        if (novaLargura < 5) {
+            System.out.println("Valor muito pequeno! Usando mínimo = 5.");
+            larguraColuna = 5;
+        } else {
+            larguraColuna = novaLargura;
+        }
+
+        System.out.println("Largura ajustada para: " + larguraColuna);
+    }
+
+
+}
