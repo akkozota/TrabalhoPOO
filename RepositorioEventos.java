@@ -25,15 +25,10 @@ public class RepositorioEventos {
 
     // alterar
     public boolean alterar(Evento eventoAlterado) {
-
         if (eventoAlterado == null)
             return false;
-
         for (int i = 0; i < eventos.size(); i++) {
-
-            if (eventos.get(i).getCodigo()
-                    == eventoAlterado.getCodigo()) {
-
+            if (eventos.get(i).getCodigo() == eventoAlterado.getCodigo()) {
                 eventos.set(i, eventoAlterado);
                 return true;
             }
@@ -44,9 +39,7 @@ public class RepositorioEventos {
 
     // buscar
     public Evento buscarPorId(int codigo) {
-
         for (Evento evento : eventos) {
-
             if (evento.getCodigo() == codigo)
                 return evento;
         }
