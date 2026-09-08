@@ -6,85 +6,116 @@ package turismo.dados;
 //do sistema, como a de que só pode cadastrar um ponto se for adm... isso eh
 //uma regra de negócio que vai p negócio
 
-import turismo.negocio.*;
-import turismo.dados.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
+import turismo.negocio.PontoTuristico;
+import turismo.negocio.TipoCategoria;
+
 public class RepositorioPontos {
+
     private List<PontoTuristico> pontos;
 
     public RepositorioPontos() {
         pontos = new ArrayList<PontoTuristico>();
     }
 
-    //inserir
-    public boolean add(PontoTuristico p) {
-        if (p == null)
+    // inserir
+    public boolean add(PontoTuristico ponto) {
+
+        if (ponto == null)
             return false;
 
-        pontos.add(p);
+        pontos.add(ponto);
         return true;
-    }
-
-    public boolean existeNomePonto(String nome) {
-        for (PontoTuristico p : pontos)
-            if (p.getNome().equalsIgnoreCase(nome))
-                return true;
-        return false;
-    }
-
-    public PontoTuristico buscarPontoPorCodigo(int codigo) {
-        for (int i = 0; i < pontos.size(); i++) {
-            PontoTuristico p = pontos.get(i);
-            if (p.getCodigo() == codigo) {
-                return p;
-            }
-        }
-        return null;
     }
 
     // alterar
-    public boolean alterar(int codigo, String nome, String descricao, List<TipoCategoria> categorias, String endereco, Cidade cidade, String coordenadasGPS, TipoStatusPonto status) {
-        PontoTuristico p = buscarPontoPorCodigo(codigo);
-        if (p == null)
+    public boolean alterar(PontoTuristico pontoAlterado) {
+
+        if (pontoAlterado == null)
             return false;
 
-        if (nome != null)
-            p.setNome(nome);
-        if (descricao != null)
-            p.setDescricao(descricao);
-        if (categorias != null)
-            p.setCategorias(categorias);
-        if (endereco != null)
-            p.setEndereco(endereco);
-        if (cidade != null)
-            p.setCidade(cidade);
-        if (coordenadasGPS != null)
-            p.setCoordenadasGPS(coordenadasGPS);
-        if (status != null)
-            p.setStatus(status);
-        return true;
-    }
+        for (int i = 0; i < pontos.size(); i++) {
 
-    // excluir
+            if (pontos.get(i).getCodigo() == pontoAlterado.getCodigo()) {
 
-    public boolean inativar(int codigo, RepositorioEventos repositorioEventos) {
-        PontoTuristico p = buscarPontoPorCodigo((codigo));
-        if (p == null) {
-            return false;
-
+                pontos.set(i, pontoAlterado);
+                return true;
+            }
         }
 
-        if (repositorioEventos.pontoTemEventos(p)) {
-            return false;
-        } //impede o cara de apagar se tiver um evento aprovado ali
+        return false;
+    }
 
-        p.setStatus(TipoStatusPonto.INATIVO);
-        return true;
+    // buscar
+    public PontoTuristico buscarPorId(int codigo) {
+
+        for (PontoTuristico ponto : pontos) {
+
+            if (ponto.getCodigo() == codigo)
+                return ponto;
+        }
+
+        return null;
+    }
+
+    // verifica se já existe um ponto com determinado nome
+    public boolean existeNome(String nome) {
+
+        if (nome == null)
+            return false;
+
+        for (PontoTuristico ponto : pontos) {
+
+            if (ponto.getNome().equalsIgnoreCase(nome))
+                return true;
+        }
+
+        return false;
+    }
+
+    // listar todos
+    public List<PontoTuristico> listar() {
+        return pontos;
+    }
+
+    // listar por cidade
+    public List<PontoTuristico> listarPorCidade(String cidade) {
+
+        List<PontoTuristico> resultado =
+                new ArrayList<PontoTuristico>();
+
+        if (cidade == null)
+            return resultado;
+
+        for (PontoTuristico ponto : pontos) {
+
+            if (ponto.getCidade().equalsIgnoreCase(cidade))
+                resultado.add(ponto);
+        }
+
+        return resultado;
+    }
+
+    // listar por categoria
+    public List<PontoTuristico> listarPorCategoria(
+            TipoCategoria categoria) {
+
+        List<PontoTuristico> resultado =
+                new ArrayList<PontoTuristico>();
+
+        if (categoria == null)
+            return resultado;
+
+        for (PontoTuristico ponto : pontos) {
+
+            if (ponto.getCategoria() == categoria)
+                resultado.add(ponto);
+        }
+
+        return resultado;
     }
 }
-
 
 
