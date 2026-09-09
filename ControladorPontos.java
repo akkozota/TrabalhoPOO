@@ -15,9 +15,9 @@ public class ControladorPontos {
     public boolean add(PontoTuristico p) {
         // regra de negocio:
         // nao pode ser mais de um ponto com mesmo nome
-        if (p != null && !repoPonto.existeNomePonto(p.getNome()))
+        if (p != null && !repoPonto.existeNome(p.getNome())) {
             return repoPonto.add(p);
-        else
+        } else
             return false;
     }
 
@@ -35,4 +35,4 @@ public class ControladorPontos {
 
 }
 
-}
+

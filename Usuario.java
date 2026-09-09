@@ -1,5 +1,8 @@
 package turismo.negocio;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Usuario {
     private int codigo;
     private String nome;
@@ -7,6 +10,23 @@ public class Usuario {
     private String senha;
     private TipoUsuario tipoUser; //normal, prop e admin
     private static int proximoCodigo = 1;
+
+        // adicionei esse construtor que estava faltando
+        private Usuario(String nome, String email, String senha, TipoUsuario tipoUser) {
+            this.codigo = proximoCodigo++;
+            this.nome = nome;
+            this.email = email;
+            this.senha = senha;
+            this.tipoUser = tipoUser;
+        }
+
+        // adicionei tambem o metodo fabrica
+        public static Usuario getInstance(String nome, String email, String senha, TipoUsuario tipoUser) {
+            if (nome != null && email != null && senha != null && tipoUser != null) {
+                return new Usuario(nome, email, senha, tipoUser);
+        }
+        return null;
+    }
 
     public int getCodigo() {
         return codigo;
