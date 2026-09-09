@@ -9,6 +9,7 @@ package turismo.dados;
 import java.util.ArrayList;
 import java.util.List;
 
+import turismo.negocio.Cidade;
 import turismo.negocio.PontoTuristico;
 import turismo.negocio.TipoCategoria;
 
@@ -81,7 +82,7 @@ public class RepositorioPontos {
     }
 
     // listar por cidade
-    public List<PontoTuristico> listarPorCidade(String cidade) {
+    public List<PontoTuristico> listarPorCidade(Cidade cidade) {
 
         List<PontoTuristico> resultado =
                 new ArrayList<PontoTuristico>();
@@ -91,7 +92,7 @@ public class RepositorioPontos {
 
         for (PontoTuristico ponto : pontos) {
 
-            if (ponto.getCidade().equalsIgnoreCase(cidade))
+            if (ponto.getCidade() == cidade)
                 resultado.add(ponto);
         }
 
@@ -110,7 +111,7 @@ public class RepositorioPontos {
 
         for (PontoTuristico ponto : pontos) {
 
-            if (ponto.getCategoria() == categoria)
+            if (ponto.getCategorias().contains(categoria))
                 resultado.add(ponto);
         }
 

@@ -21,15 +21,23 @@ public class ControladorPontos {
             return false;
     }
 
+    public PontoTuristico buscarPorId(int codigo) {
+        return repoPonto.buscarPorId(codigo);
+    }
 
     // alterar
     public boolean alterar(PontoTuristico pAlterado) {
-        if (pAlterado != null && !pAlterado.getNome().isEmpty()
-                && repoPonto.buscarPontoPorNome(pAlterado.getNome())
-                .getCodigo() == pAlterado.getCodigo())
-            return repoPonto.alterar(pAlterado);
-        else
+
+        if (pAlterado == null || pAlterado.getNome() == null || pAlterado.getNome().isEmpty())
             return false;
+
+        PontoTuristico existente = repoPonto.buscarPorId(pAlterado.getCodigo());
+        if (existente == null)
+            return false;
+
+        // faltava esse return: se passou pelas duas checagens, o ponto existe
+        // e pode ser alterado de fato
+        return repoPonto.alterar(pAlterado);
     }
 
 
