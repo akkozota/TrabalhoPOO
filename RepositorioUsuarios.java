@@ -17,18 +17,20 @@ public class RepositorioUsuarios {
 
     // inserir
 
-    void inserirUsuario(Usuario u) {
-        //* usando o add pra adicionar um objeto dentro do ArrayList
-        if (u != null) {
-            //if (u != null && buscarUsuario(u.getLogin()) == null) {
-            usuarios.add(u);
-        }
-    }
+    //o metodo tava errrado tava void e o controlador não conseguia chamar
+    //consertei para boolean igual aos outros
+  public boolean inserir(Usuario u) {
+        if (u == null)
+            return false;
+        usuarios.add(u);
+        return true;
+  }
 
-    public Usuario loginUsuario(String nomeUsuario, String senhaLogin) {
+//troquei a validacao pelo email(identificador unico) pq nao existe o metodo getNomeUsuario
+    public Usuario login(String email, String senha) {
         for (int i = 0; i < usuarios.size() ; i++) {
             Usuario usuariosLista = usuarios.get(i);
-            if (usuariosLista.getNomeUsuario().equals(nomeUsuario) && usuariosLista.getSenha().equals(senhaLogin)) {
+            if (usuariosLista.getEmail().equals(email) && usuariosLista.getSenha().equals(senha)) {
                 return usuariosLista;
             }
         }

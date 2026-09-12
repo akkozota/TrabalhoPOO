@@ -3,129 +3,54 @@ package turismo.negocio;
 import java.util.List;
 import java.util.Date;
 import turismo.dados.RepositorioEventos;
+import turismo.dados.RepositorioUsuarios;
 
-// vou me matar hj as 23:59 n aguento mais essa bosta
-public class ControladorEvento {
+//exclui o que tinha aqui que era copia de controlador eventos
 
-    private RepositorioEventos repoEventos;
+public class ControladorUsuarios {
 
-    public ControladorEvento() {
-        repoEventos = new RepositorioEventos();
+    private RepositorioUsuarios repoUsuarios;
+
+    public ControladorUsuarios() {
+        repoUsuarios = new RepositorioUsuarios();
     }
 
-    // inserir
-    public boolean add(Evento evento) {
+    public boolean registrar (Usuario usuario) {
 
-        // validações
-        if (evento == null)
+        if (usuario == null || usuario.getTipoUser() != TipoUsuario.NORMAL)
             return false;
 
-        if (evento.getNome() == null || evento.getNome().isEmpty())
+        if (usuario.getEmail() == null || usuario.getEmail().isEmpty())
             return false;
 
-        if (evento.getDescricao() == null || evento.getDescricao().isEmpty())
+        if (repoUsuarios.existeEmail(usuario.getEmail()))
             return false;
 
-        if (evento.getDataInicio() == null || evento.getDataFim() == null)
+        return repoUsuarios.inserir(usuario);
+
+      }
+
+      public Usuario login(String email, String senha) {
+        return repoUsuarios.login(email, senha);
+      }
+
+      public Usuario buscarPorId(int codigo) {
+        return repoUsuarios.buscarPorId(codigo);
+      }
+
+      public boolean atualizarPerfil(Usuario usuarioAlterado) {
+        if (usuarioAlterado == null)
             return false;
 
-        if (evento.getPontoTuristico() == null)
-            return false;
+        Usuario existente = repoUsuarios.buscarPorId(usuarioAlterado.getCodigo());
+           if (existente == null)
+               return false;
 
-        // data de início não pode ser depois da data de fim
-        if (evento.getDataInicio().after(evento.getDataFim()))
-            return false;
+           return repoUsuarios.alterar(usuarioAlterado);
+      }
 
-        // regra de negócio:
-        // o evento começa como pendente
-        evento.setStatus(TipoStatusEvento.PENDENTE);
-
-        // regra de negócio:
-        // não pode haver outro evento aprovado
-        // no mesmo ponto turístico e no mesmo período
-        if (existeConflito(evento))
-            return false;
-
-        return repoEventos.add(evento);
+      public boolean excluirConta(int codigo) {
+        return repoUsuarios.excluir(codigo);
+      }
     }
 
-    // verifica conflito de horários
-    private boolean existeConflito(Evento evento) {
-
-        List<Evento> eventos = repoEventos.listar();
-
-        for (Evento outro : eventos) {
-
-            if (outro.getStatus() == TipoStatusEvento.APROVADO
-                    && outro.getPontoTuristico().getCodigo()
-                    == evento.getPontoTuristico().getCodigo()) {
-
-                if (evento.getDataInicio().before(outro.getDataFim())
-                        && evento.getDataFim().after(outro.getDataInicio())) {
-
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
-    // alterar
-    public boolean alterar(Evento evento) {
-
-        if (evento == null)
-            return false;
-
-        if (evento.getNome() == null || evento.getNome().isEmpty())
-            return false;
-
-        if (evento.getDataInicio() == null || evento.getDataFim() == null)
-            return false;
-
-        if (evento.getDataInicio().after(evento.getDataFim()))
-            return false;
-
-        Evento eventoEncontrado =
-                repoEventos.buscarPorId(evento.getCodigo());
-
-        if (eventoEncontrado == null)
-            return false;
-
-        return repoEventos.alterar(evento);
-    }
-
-    // cancelar
-    public boolean cancelar(int codigo) {
-
-        Evento evento = repoEventos.buscarPorId(codigo);
-
-        if (evento == null)
-            return false;
-
-        evento.setStatus(TipoStatusEvento.CANCELADO);
-
-        return repoEventos.alterar(evento);
-    }
-
-    // buscar
-    public Evento buscarPorId(int codigo) {
-        return repoEventos.buscarPorId(codigo);
-    }
-
-    // listar
-    public List<Evento> listar() {
-        return repoEventos.listar();
-    }
-
-    public List<Evento> listarPorPeriodo(Date dataInicio, Date dataFim) {
-
-        if (dataInicio == null || dataFim == null)
-            return null;
-
-        if (dataInicio.after(dataFim))
-            return null;
-
-        return repoEventos.listarPorPeriodo(dataInicio, dataFim);
-    }
-}
