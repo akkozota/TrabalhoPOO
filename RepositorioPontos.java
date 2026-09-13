@@ -1,4 +1,6 @@
 package turismo.dados;
+import turismo.negocio.Cidade;
+import turismo.negocio.TipoCategoria;
 
 //responsável por guardar e procurar os objetos, vai ter funções como
 //adicionar, buscar ponto, verificar se ja existe um nome, alterar um ponto,
@@ -9,7 +11,6 @@ package turismo.dados;
 import java.util.ArrayList;
 import java.util.List;
 
-import turismo.negocio.Cidade;
 import turismo.negocio.PontoTuristico;
 import turismo.negocio.TipoCategoria;
 
@@ -23,7 +24,6 @@ public class RepositorioPontos {
 
     // inserir
     public boolean add(PontoTuristico ponto) {
-
         if (ponto == null)
             return false;
 
@@ -33,7 +33,6 @@ public class RepositorioPontos {
 
     // alterar
     public boolean alterar(PontoTuristico pontoAlterado) {
-
         if (pontoAlterado == null)
             return false;
 
@@ -49,11 +48,9 @@ public class RepositorioPontos {
         return false;
     }
 
-    // buscar
+    // buscar pelo código
     public PontoTuristico buscarPorId(int codigo) {
-
         for (PontoTuristico ponto : pontos) {
-
             if (ponto.getCodigo() == codigo)
                 return ponto;
         }
@@ -63,7 +60,6 @@ public class RepositorioPontos {
 
     // verifica se já existe um ponto com determinado nome
     public boolean existeNome(String nome) {
-
         if (nome == null)
             return false;
 
@@ -83,15 +79,11 @@ public class RepositorioPontos {
 
     // listar por cidade
     public List<PontoTuristico> listarPorCidade(Cidade cidade) {
-
-        List<PontoTuristico> resultado =
-                new ArrayList<PontoTuristico>();
-
+        List<PontoTuristico> resultado = new ArrayList<PontoTuristico>();
         if (cidade == null)
             return resultado;
 
         for (PontoTuristico ponto : pontos) {
-
             if (ponto.getCidade() == cidade)
                 resultado.add(ponto);
         }
@@ -103,14 +95,11 @@ public class RepositorioPontos {
     public List<PontoTuristico> listarPorCategoria(
             TipoCategoria categoria) {
 
-        List<PontoTuristico> resultado =
-                new ArrayList<PontoTuristico>();
+        List<PontoTuristico> resultado = new ArrayList<PontoTuristico>();
 
         if (categoria == null)
             return resultado;
-
         for (PontoTuristico ponto : pontos) {
-
             if (ponto.getCategorias().contains(categoria))
                 resultado.add(ponto);
         }
