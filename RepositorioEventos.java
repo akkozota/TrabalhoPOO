@@ -56,8 +56,7 @@ public class RepositorioEventos {
     public List<Evento> listarPorPeriodo(
             Date dataInicio, Date dataFim) {
 
-        List<Evento> resultado =
-                new ArrayList<Evento>();
+        List<Evento> resultado = new ArrayList<Evento>();
 
         if (dataInicio == null || dataFim == null)
             return resultado;
