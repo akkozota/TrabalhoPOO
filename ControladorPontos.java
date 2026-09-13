@@ -12,15 +12,18 @@ public class ControladorPontos {
     }
 
     // inserir
-    public boolean add(PontoTuristico p) {
+    public boolean add(PontoTuristico p, Usuario usuario) {
         // regra de negocio:
         // nao pode ser mais de um ponto com mesmo nome
-        if (p != null && !repoPonto.existeNome(p.getNome())) {
+        //e só administrador pode cadastrar ponto
+        if (p != null && !p.getNome().isEmpty() && p.getDescricao() != null
+        && p.getCidade() != null && p.getEndereco() != null && p.getCategorias() != null
+        && p.getCoordenadasGPS() != null && usuario != null
+                && usuario.getTipoUser() == TipoUsuario.ADMIN && !repoPonto.existeNome(p.getNome()))
             return repoPonto.add(p);
-        } else
+        else
             return false;
     }
-
     public PontoTuristico buscarPorId(int codigo) {
         return repoPonto.buscarPorId(codigo);
     }
@@ -40,7 +43,27 @@ public class ControladorPontos {
         return repoPonto.alterar(pAlterado);
     }
 
+    public PontoTuristico buscarPontoPorCodigo(int codigo) {
+        return repoPonto.buscarPorId(codigo);
+    }
+
+    public PontoTuristico buscarPontoPorNome(String nome) {
+        if (nome == null)
+            return null;
+        List<PontoTuristico> pontos = repoPonto.listar();
+
+        for (int i = 0; i < pontos.size(); i++) {
+            PontoTuristico p = pontos.get(i);
+            if (p.getNome().equalsIgnoreCase(nome)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public List<PontoTuristico> listar() {
+        return repoPonto.listar();
+    }
+
 
 }
-
-
