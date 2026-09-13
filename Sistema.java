@@ -1,4 +1,4 @@
-ackage turismo.negocio;
+package turismo.negocio;
 
 import turismo.dados.*;
 import turismo.negocio.*;
