@@ -63,19 +63,18 @@ public class PontoTuristico {
         this.categorias = new ArrayList<TipoCategoria>(categorias);
     }
 
+    //antes ficava um loop onde ele percorria todas as categorias e pra cada
+    //uma que n era igual adicionava uma nova, com o funcao do list é melhor
     public void adicionarCategoria(TipoCategoria categoria) {
-        for (int i = 0; i < categorias.size(); i++) {
-            if (categoria != null && categorias.get(i) != categoria) {
-                categorias.add(categoria);
-            }
-        }
+       if (categoria != null && !categorias.contains(categoria)) {
+           categorias.add(categoria);
+       }
     }
 
+    //mesma coisa aqui
     public void removerCategoria(TipoCategoria categoria) {
-        for (int i = 0; i < categorias.size(); i++) {
-            if (categoria != null && categorias.get(i) == categoria) {
-                categorias.remove(categoria);
-            }
+        if (categoria != null) {
+            categorias.remove(categoria);
         }
     }
 

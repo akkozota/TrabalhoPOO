@@ -37,12 +37,6 @@ public class RepositorioUsuarios {
         return null;
     }
 
-    public void mudarTipoUsuario(Usuario usuario) {
-        if (usuario != null) {
-            usuario.mudarTipoUsuario();
-        }
-    }
-
     // alterar
     public boolean alterar(Usuario usuarioAlterado) {
         if (usuarioAlterado == null)

@@ -108,24 +108,39 @@ public class ControladorEventos {
         return repoEventos.alterar(evento);
     }
 
-    // buscar
-    public Evento buscarPorId(int codigo) {
-        return repoEventos.buscarPorId(codigo);
-    }
+//novo metodo para que os eventos pendentes possam ser aprovados
+public boolean aprovar(int codigo) {
 
-    // listar
-    public List<Evento> listar() {
-        return repoEventos.listar();
-    }
+    Evento evento = repoEventos.buscarPorId(codigo);
 
-    public List<Evento> listarPorPeriodo(Date dataInicio, Date dataFim) {
+    if (evento == null || evento.getStatus() != TipoStatusEvento.PENDENTE)
+        return false;
 
-        if (dataInicio == null || dataFim == null)
-            return null;
+    if (existeConflito(evento))
+        return false;
 
-        if (dataInicio.after(dataFim))
-            return null;
+    evento.setStatus(TipoStatusEvento.APROVADO);
+    return repoEventos.alterar(evento);
+}
 
-        return repoEventos.listarPorPeriodo(dataInicio, dataFim);
-    }
+//buscar
+public Evento buscarPorId(int codigo) {
+    return repoEventos.buscarPorId(codigo);
+}
+
+//listar
+public  List<Evento> listar() {
+    return repoEventos.listar();
+}
+
+public List<Evento> listarPorPeriodo(Date dataInicio, Date dataFim) {
+
+    if (dataInicio == null || dataFim == null)
+        return null;
+
+    if (dataInicio.after(dataFim))
+        return null;
+
+    return repoEventos.listarPorPeriodo(dataInicio, dataFim);
+}
 }

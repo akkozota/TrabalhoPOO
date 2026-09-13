@@ -34,6 +34,8 @@ public class Sistema {
     public boolean alterarPonto(PontoTuristico pAlterado) {
         return controladorPonto.alterar(pAlterado);
     }
+
+    
 }
 
 //package trabalho;
