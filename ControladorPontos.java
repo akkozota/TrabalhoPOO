@@ -2,7 +2,9 @@ package turismo.negocio;
 
 import java.util.List;
 import turismo.dados.*;
+
 //regras d negócio de pontos
+//decide qm cadastra e tal
 
 public class ControladorPontos {
     private RepositorioPontos repoPonto;
@@ -16,14 +18,26 @@ public class ControladorPontos {
         // regra de negocio:
         // nao pode ser mais de um ponto com mesmo nome
         //e só administrador pode cadastrar ponto
-        if (p != null && !p.getNome().isEmpty() && p.getDescricao() != null
-        && p.getCidade() != null && p.getEndereco() != null && p.getCategorias() != null
-        && p.getCoordenadasGPS() != null && usuario != null
-                && usuario.getTipoUser() == TipoUsuario.ADMIN && !repoPonto.existeNome(p.getNome()))
-            return repoPonto.add(p);
-        else
+        if (usuario == null || usuario.getTipoUser() != TipoUsuario.ADMIN) {
             return false;
+        }
+
+        if (p == null || p.getNome() == null || p.getNome().isEmpty() || p.getDescricao() == null ||
+                p.getDescricao().isEmpty() || p.getCidade() == null || p.getEndereco() == null ||
+                p.getEndereco().isEmpty() || p.getCategorias() == null || p.getCategorias().isEmpty()
+                || p.getCoordenadasGPS() == null || p.getCoordenadasGPS().isEmpty()) {
+            return false;
+        }
+
+        //n pode existir outro ponto cm mesmo nome
+        if (repoPonto.existeNome(p.getNome())) {
+            return false;
+        }
+
+        return repoPonto.add(p);
     }
+
+
     public PontoTuristico buscarPorId(int codigo) {
         return repoPonto.buscarPorId(codigo);
     }
@@ -63,6 +77,15 @@ public class ControladorPontos {
 
     public List<PontoTuristico> listar() {
         return repoPonto.listar();
+    }
+
+    // listar por cidade
+    public List<PontoTuristico> listarPorCidade( Cidade cidade) {
+        return repoPonto.listarPorCidade(cidade);
+    }
+    // listar por categoria
+    public List<PontoTuristico> listarPorCategoria( TipoCategoria categoria) {
+        return repoPonto.listarPorCategoria(categoria);
     }
 
 
