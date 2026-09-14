@@ -1,12 +1,10 @@
 package turismo.negocio;
 
 import turismo.dados.*;
-import turismo.negocio.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 
 
 public class Sistema {
@@ -42,13 +40,21 @@ public class Sistema {
         addUsuario(u3);
 
         // -- pontos --
-        PontoTuristico p1 = PontoTuristico.getInstance("Parque Ipanema", "Lugarzinho ai" , TipoCategoria.LAZER , "naosei", Cidade.IPATINGA, "41.98108, -80.61234" ,TipoStatusPonto.ATIVO );
+            List<TipoCategoria> categoriasP1 = new ArrayList<TipoCategoria>();
+            categoriasP1.add(TipoCategoria.LAZER);
+        PontoTuristico p1 = PontoTuristico.getInstance("Parque Ipanema", "Lugarzinho ai" , categoriasP1 , "naosei", Cidade.IPATINGA, "41.98108, -80.61234" ,TipoStatusPonto.ATIVO );
         addPonto(p1, u1);
 
-        PontoTuristico p2 = PontoTuristico.getInstance("Riacho das pedras", "lugarzinho legal", TipoCategoria.NATUREZA, "naosei", Cidade.CORONEL_FABRICIANO, "41.98108, -80.61234" ,TipoStatusPonto.ATIVO) ;
+        List<TipoCategoria> categoriasP2 = new ArrayList<TipoCategoria>();
+        categoriasP2.add(TipoCategoria.NATUREZA);
+        categoriasP2.add(TipoCategoria.LAZER);
+
+        PontoTuristico p2 = PontoTuristico.getInstance("Riacho das pedras", "lugarzinho legal", categoriasP2, "naosei", Cidade.CORONEL_FABRICIANO, "41.98108, -80.61234" ,TipoStatusPonto.ATIVO) ;
         addPonto(p2, u1);
 
-        PontoTuristico p3 = PontoTuristico.getInstance("CEFET MG", "ceferno", TipoCategoria.TURISMO_INDUSTRIAL, "naosei", Cidade.TIMOTEO, "41.98108, -80.61234" , TipoStatusPonto.ATIVO );
+        List<TipoCategoria> categoriasP3 = new ArrayList<TipoCategoria>();
+        categoriasP3.add(TipoCategoria.TURISMO_INDUSTRIAL);
+        PontoTuristico p3 = PontoTuristico.getInstance("CEFET MG", "ceferno", categoriasP3, "naosei", Cidade.TIMOTEO, "41.98108, -80.61234" , TipoStatusPonto.ATIVO );
         addPonto(p3, u1);
 
         // -- eventos --
@@ -67,14 +73,15 @@ public class Sistema {
     }
 
     public int buscarPonto(String nome) {
-        List<PontoTuristico> pontos = controladorPonto.listar();
-        for (int i = 0; i < pontos.size(); i++) {
-            PontoTuristico ponto = pontos.get(i);
-            if (ponto.getNome().equalsIgnoreCase(nome)) {
-                return ponto.getCodigo();
-            }
-        }
-        return -1;
+        return controladorPonto.buscarPontoPorNome(nome);
+//        List<PontoTuristico> pontos = controladorPonto.listar();
+//        for (int i = 0; i < pontos.size(); i++) {
+//            PontoTuristico ponto = pontos.get(i);
+//            if (ponto.getNome().equalsIgnoreCase(nome)) {
+//                return ponto.getCodigo();
+//            }
+//        }
+//        return -1;
     }
 
     public boolean buscarCodPonto(int codigo) {
@@ -82,23 +89,22 @@ public class Sistema {
         return ponto != null;
     }
 
+    public String buscarPontoPornome(String nome) {
+        return controladorPonto.buscarPontoPorNome(nome);
+    }
+
     public List<PontoTuristico> listarPontos() {
         return controladorPonto.listar();
+    }
+
+    public boolean solicitarPropriedade(Usuario usuario, int codigoPropriedade, String comprovante) {
+        return controladorUsuario.solicitarPropriedade(usuario, codigoPropriedade, comprovante);
     }
 
 
 
 //    public boolean inativarPonto(int codigo) {
-//        PontoTuristico p = buscarPontoPorCodigo(codigo);
-//        if (p == null) //se n achar ponto com esse codigo
-//            return false;
-//
-//        if (pontoTemEvento(p)) {
-//           return false;  //se tem evento e ainda tá ativo, vai dar erro
-//        } else {
-//            p.setStatus(TipoStatusPonto.INATIVO);
-//        }
-//        return true;
+//        return controladorPonto
 //    }
 
 
@@ -136,12 +142,12 @@ public class Sistema {
         return controladorEvento.alterar(evento);
     }
 
-    public boolean excluirEvento(Evento evento) {
-        return controladorEvento.cancelar(evento);
+    public boolean excluirEvento(int codigo) {
+        return controladorEvento.cancelar(codigo);
     }
 
-    public boolean aprovarEvento(Evento evento) {
-        return controladorEvento.aprovar(evento);
+    public boolean aprovarEvento(int codigo) {
+        return controladorEvento.aprovar(codigo);
     }
 
     // -- USUÁRIOS --
@@ -164,8 +170,8 @@ public class Sistema {
 
     // -- propriedade --
 
-    public boolean SolicitarPropriedade(Usuario usuario, String comprovante) {
-        return controladorUsuario.solicitarPropriedade(usuario, comprovante);
+    public boolean SolicitarPropriedade(Usuario usuario, int codigoPropriedade, String comprovante) {
+        return controladorUsuario.solicitarPropriedade(usuario, codigoPropriedade, comprovante);
     }
 
     public List<SolicitacaoPropriedade> listarSolicitacoespendentes() {
@@ -192,6 +198,7 @@ public class Sistema {
     public ControladorUsuarios getControladorUsuario() {
         return controladorUsuario;
     }
+
 
 
 }
