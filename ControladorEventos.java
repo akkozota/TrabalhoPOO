@@ -2,6 +2,8 @@ package turismo.negocio;
 
 import java.util.List;
 import java.util.Date;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import turismo.dados.RepositorioEventos;
 
 // Responsável pelas regras de negócio de evento
@@ -108,39 +110,39 @@ public class ControladorEventos {
         return repoEventos.alterar(evento);
     }
 
-//novo metodo para que os eventos pendentes possam ser aprovados
-public boolean aprovar(int codigo) {
+    //novo metodo para que os eventos pendentes possam ser aprovados
+    public boolean aprovar(int codigo) {
 
-    Evento evento = repoEventos.buscarPorId(codigo);
+        Evento evento = repoEventos.buscarPorId(codigo);
 
-    if (evento == null || evento.getStatus() != TipoStatusEvento.PENDENTE)
-        return false;
+        if (evento == null || evento.getStatus() != TipoStatusEvento.PENDENTE)
+            return false;
 
-    if (existeConflito(evento))
-        return false;
+        if (existeConflito(evento))
+            return false;
 
-    evento.setStatus(TipoStatusEvento.APROVADO);
-    return repoEventos.alterar(evento);
-}
+        evento.setStatus(TipoStatusEvento.APROVADO);
+        return repoEventos.alterar(evento);
+    }
 
-//buscar
-public Evento buscarPorId(int codigo) {
-    return repoEventos.buscarPorId(codigo);
-}
+    //buscar
+    public Evento buscarPorId(int codigo) {
+        return repoEventos.buscarPorId(codigo);
+    }
 
-//listar
-public  List<Evento> listar() {
-    return repoEventos.listar();
-}
+    //listar
+    public  List<Evento> listar() {
+        return repoEventos.listar();
+    }
 
-public List<Evento> listarPorPeriodo(Date dataInicio, Date dataFim) {
+    public List<Evento> listarPorPeriodo(Date dataInicio, Date dataFim) {
 
-    if (dataInicio == null || dataFim == null)
-        return null;
+        if (dataInicio == null || dataFim == null)
+            return new ArrayList<Evento>();
 
-    if (dataInicio.after(dataFim))
-        return null;
+        if (dataInicio.after(dataFim))
+            return new ArrayList<Evento>();
 
-    return repoEventos.listarPorPeriodo(dataInicio, dataFim);
-}
+        return repoEventos.listarPorPeriodo(dataInicio, dataFim);
+    }
 }
