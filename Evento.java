@@ -1,6 +1,7 @@
 package turismo.negocio;
 
 import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 // em negócio é onde ficam as classes responsáveis pelas entidades
@@ -9,8 +10,8 @@ import java.util.List;
 public class Evento {
     private String nome;
     private String descricao;
-    private Date dataInicio;
-    private Date dataFim;
+    private LocalDate dataInicio;
+    private LocalDate dataFim;
     private PontoTuristico pontoTuristico;
     private TipoStatusEvento status;
 
@@ -18,7 +19,7 @@ public class Evento {
     private static int proximoCodigo = 1;
 
     // Construtor
-    private Evento(String nome, String descricao, Date dataInicio, Date dataFim, PontoTuristico pontoTuristico, TipoStatusEvento status) {
+    private Evento(String nome, String descricao, LocalDate dataInicio, LocalDate dataFim, PontoTuristico pontoTuristico, TipoStatusEvento status) {
         this.codigo = proximoCodigo++;
         this.nome = nome;
         this.descricao = descricao;
@@ -30,7 +31,7 @@ public class Evento {
 
 
     // método fábrica
-    public static Evento getInstance(String nome, String descricao, Date dataInicio, Date dataFim, PontoTuristico pontoTuristico, TipoStatusEvento status) {
+    public static Evento getInstance(String nome, String descricao, LocalDate dataInicio, LocalDate dataFim, PontoTuristico pontoTuristico, TipoStatusEvento status) {
         if (nome != null && descricao != null && dataInicio != null && dataFim != null && pontoTuristico != null && status != null) {
             return new Evento(nome, descricao, dataInicio, dataFim, pontoTuristico, status);
         }
@@ -68,19 +69,19 @@ public class Evento {
         this.descricao = descricao;
     }
 
-    public Date getDataInicio() {
+    public LocalDate getDataInicio() {
         return dataInicio;
     }
 
-    public void setDataInicio(Date dataInicio) {
+    public void setDataInicio(LocalDate dataInicio) {
         this.dataInicio = dataInicio;
     }
 
-    public Date getDataFim() {
+    public LocalDate getDataFim() {
         return dataFim;
     }
 
-    public void setDataFim(Date dataFim) {
+    public void setDataFim(LocalDate dataFim) {
         this.dataFim = dataFim;
     }
 
