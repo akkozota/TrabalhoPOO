@@ -5,8 +5,6 @@ import java.util.List;
 
 import turismo.negocio.Usuario;
 
-
-
 public class RepositorioUsuarios {
 
     private List<Usuario> usuarios;
@@ -19,14 +17,14 @@ public class RepositorioUsuarios {
 
     //o metodo tava errrado tava void e o controlador não conseguia chamar
     //consertei para boolean igual aos outros
-  public boolean inserir(Usuario u) {
+    public boolean inserir(Usuario u) {
         if (u == null)
             return false;
         usuarios.add(u);
         return true;
-  }
+    }
 
-//troquei a validacao pelo email(identificador unico) pq nao existe o metodo getNomeUsuario
+    //troquei a validacao pelo email(identificador unico) pq nao existe o metodo getNomeUsuario
     public Usuario login(String email, String senha) {
         for (int i = 0; i < usuarios.size() ; i++) {
             Usuario usuariosLista = usuarios.get(i);
