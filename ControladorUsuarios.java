@@ -2,12 +2,11 @@ package turismo.negocio;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Date;
-import turismo.dados.RepositorioEventos;
 import turismo.dados.RepositorioUsuarios;
 
 //exclui o que tinha aqui que era copia de controlador eventos
 
+//regras d negócio d usuários
 public class ControladorUsuarios {
 
     private RepositorioUsuarios repoUsuarios;
@@ -15,78 +14,89 @@ public class ControladorUsuarios {
 
     public ControladorUsuarios() {
         repoUsuarios = new RepositorioUsuarios();
+        solicitacoes = new ArrayList<SolicitacaoPropriedade>();
     }
 
     public boolean registrar (Usuario usuario) {
+        //adicionei umas validações q tavam em falta
 
-        if (usuario == null || usuario.getTipoUser() != TipoUsuario.NORMAL)
+        if (usuario == null && usuario.getTipoUser() != TipoUsuario.NORMAL) //impede q um ze qualquer se cadastre como admin
             return false;
 
-        if (usuario.getEmail() == null || usuario.getEmail().isEmpty())
+        if (usuario.getNomeUsuario() == null || usuario.getNomeUsuario().isEmpty()) {
             return false;
+        }
+
+        if (usuario.getEmail() == null || usuario.getEmail().isEmpty()) {
+            return false;
+    }
+
+        if (usuario.getSenha() == null || usuario.getSenha().isEmpty()) {
+            return false;
+        }
 
         if (repoUsuarios.existeEmail(usuario.getEmail()))
             return false;
 
         return repoUsuarios.inserir(usuario);
 
-      }
+    }
 
-      public Usuario login(String email, String senha) {
+    public Usuario login(String email, String senha) {
         return repoUsuarios.login(email, senha);
-      }
+    }
 
-      public Usuario buscarPorId(int codigo) {
+    public Usuario buscarPorId(int codigo) {
         return repoUsuarios.buscarPorId(codigo);
-      }
+    }
 
-      public boolean atualizarPerfil(Usuario usuarioAlterado) {
+    public boolean atualizarPerfil(Usuario usuarioAlterado) {
         if (usuarioAlterado == null)
             return false;
 
         Usuario existente = repoUsuarios.buscarPorId(usuarioAlterado.getCodigo());
-           if (existente == null)
-               return false;
+        if (existente == null)
+            return false;
 
-           return repoUsuarios.alterar(usuarioAlterado);
-      }
+        return repoUsuarios.alterar(usuarioAlterado);
+    }
 
-      public boolean excluirConta(int codigo) {
+    public boolean excluirConta(int codigo) {
         return repoUsuarios.excluir(codigo);
-      }
+    }
 
-      public List<Usuario> listar() {
+    public List<Usuario> listar() {
         return  repoUsuarios.listar();
-      }
+    }
 
-      public boolean solicitarPropriedade(Usuario usuario, String comprovante) {
+    public boolean solicitarPropriedade(Usuario usuario, int codigoPropriedade, String comprovante) {
         if (usuario == null || usuario.getTipoUser() != TipoUsuario.NORMAL)
             return false;
 
-        SolicitacaoPropriedade solicitacao = SolicitacaoPropriedade.getInstance( usuario, comprovante);
+        SolicitacaoPropriedade solicitacao = SolicitacaoPropriedade.getInstance( usuario, codigoPropriedade, comprovante);
         if (solicitacao == null)
             return false;
 
         solicitacoes.add(solicitacao);
         return true;
-      }
+    }
 
-      public List<SolicitacaoPropriedade> listarSolicitacoesPendentes(){
+    public List<SolicitacaoPropriedade> listarSolicitacoesPendentes(){
         List<SolicitacaoPropriedade> pendentes = new ArrayList<SolicitacaoPropriedade>();
         for (SolicitacaoPropriedade s : solicitacoes) {
             if (s.getStatus() == TipoStatusSolicitacao.PENDENTE)
                 pendentes.add(s);
         }
         return pendentes;
-      }
+    }
 
-      public SolicitacaoPropriedade buscarSolicitacaoPorId(int codigo) {
+    public SolicitacaoPropriedade buscarSolicitacaoPorId(int codigo) {
         for (SolicitacaoPropriedade s: solicitacoes) {
             if (s.getCodigo() == codigo)
                 return s;
         }
         return null;
-      }
+    }
 
     public boolean aprovarSolicitacao(int codigoSolicitacao) {
         SolicitacaoPropriedade solicitacao = buscarSolicitacaoPorId(codigoSolicitacao);
@@ -106,5 +116,5 @@ public class ControladorUsuarios {
         solicitacao.setStatus(TipoStatusSolicitacao.RECUSADA);
         return true;
     }
-    }
+}
 
